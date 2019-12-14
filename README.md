@@ -1,4 +1,4 @@
-# A list of scripts I use from time to time
+# Some scripts I use from time to time
 
 ##### 1. alpine-setup-mate.sh
 
