@@ -6,7 +6,7 @@ A quick script I use to quickly setup a MATE Desktop on an Alpine Linux machine.
 
 Requirements:
 - must be run as root
-- assumes a "sys" installation was peformed and that all repositories are enabled: stable and edge versions for main, community and testing
+- assumes a "sys" installation with all repositories enabled: (main, community, testing, stable, edge)
 
 To set the username and password for the restricted user change the USERNAME and PASSWORD variables at the top.
 Use at your own risk.
