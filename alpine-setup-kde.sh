@@ -8,12 +8,12 @@ apk update && apk upgrade
 setup-xorg-base $(apk search --quiet --exact xf86-video* | grep -v -- '\-doc$')
  
 #install KDE desktop
-apk add desktop-file-utils dbus lxdm udev sudo
+apk add desktop-file-utils dbus sddm udev sudo
 apk add $(apk search plasma -q | grep -v '\-dev' | grep -v '\-lang' | grep -v '\-doc')
 apk add konsole dolphin dolphin-plugins okular kwrite ark kwalletmanager
  
 #configure some services to start at boot
-rc-update add lxdm
+rc-update add sddm
 rc-update add dbus
 rc-update add udev
  
@@ -35,7 +35,7 @@ apk add $(apk search -q ttf- | grep -v '\-doc')
  
 #start some services
 rc-service udev start
-#rc-service lxdm start
+#rc-service sddm start
  
 #install Network Manager
 apk add networkmanager networkmanager-openrc network-manager-applet wpa_supplicant
