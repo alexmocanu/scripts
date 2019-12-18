@@ -11,7 +11,11 @@ setup-xorg-base $(apk search --quiet --exact xf86-video* | grep -v -- '\-doc$')
 apk add desktop-file-utils dbus sddm udev sudo
 apk add $(apk search plasma -q | grep -v '\-dev' | grep -v '\-lang' | grep -v '\-doc')
 apk add konsole dolphin dolphin-plugins okular kwrite ark kwalletmanager
- 
+apk add kde-applications-base kde-applications-admin kde-applications-network kde-applications-utils kde-applications-accessibility kde-applications-graphics
+apk add kde-applications-base kde-applications-admin kde-applications-accessibility kde-applications-graphics kde-applications-utils kde-applications-network kde-applications-multimedia
+#apk add kde-applications-pim kde-applications-webdev kde-applications-games
+
+
 #configure some services to start at boot
 rc-update add sddm
 rc-update add dbus
