@@ -55,7 +55,7 @@ echo 'iface lo inet loopback' >> /etc/network/interfaces
 # - wpa supplicant conflicts with NM so we clear this file
 truncate -s0 /etc/wpa_supplicant/wpa_supplicant.conf
 
-# - uncomment these lines if you want to randomize your wifi MAC. My use case requires that the MAC address stay the same
+# - uncomment these lines if you want to stop randomizing your wifi MAC.
 #echo '[device]' >> /etc/NetworkManager/NetworkManager.conf
 #echo 'wifi.scan-rand-mac-address=no' >> /etc/NetworkManager/NetworkManager.conf
 
