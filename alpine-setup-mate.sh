@@ -8,11 +8,11 @@ apk update && apk upgrade
 setup-xorg-base $(apk search --quiet --exact xf86-video* | grep -v -- '\-doc$')
  
 #install mate desktop
-apk add desktop-file-utils gtk-engines consolekit gtk-murrine-engine caja caja-extensions marco dbus lxdm udev hicolor-icon-theme sudo
+apk add desktop-file-utils gtk-engines consolekit gtk-murrine-engine caja caja-extensions marco dbus sddm udev hicolor-icon-theme sudo
 apk add $(apk search mate -q | grep -v '\-dev' | grep -v '\-lang' | grep -v '\-doc')
  
 #configure some services to start at boot
-rc-update add lxdm
+rc-update add sddm
 rc-update add dbus
 rc-update add udev
  
@@ -34,7 +34,7 @@ apk add $(apk search -q ttf- | grep -v '\-doc')
  
 #start some services
 rc-service udev start
-#rc-service lxdm start
+#rc-service sddm start
  
 #add GVFS packages for Nautilus
 #apk add gvfs-cdda gvfs-afp gvfs-mtp gvfs-smb gvfs gvfs-lang gvfs-nfs gvfs-dev gvfs-archive gvfs-dav gvfs-fuse gvfs-gphoto2 gvfs-avahi
