@@ -32,3 +32,6 @@ Requirements:
 
 To set the username and password for the restricted user change the USERNAME and PASSWORD variables at the top.
 Use at your own risk.
+
+##### 4. debian-gateway.sh
+A script I use to quickly setup a gateway/nat/dhcp/dns box when I play with virtual networks. 
