@@ -55,8 +55,8 @@ iptables -X; iptables -F; iptables -t nat -X; iptables -t nat -F
 
 ### 4.1 Configure ip forwarding and masquerading
 sysctl -w net.ipv4.ip_forward=1
-sed -i 's/#net.ipv4.ip_forward=*/net.ipv4.ip_forward=/g' /etc/sysctl.conf
-sed -i 's/net.ipv4.ip_forward=*/net.ipv4.ip_forward=/g' /etc/sysctl.conf
+sed -i 's/#net.ipv4.ip_forward=*/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
+sed -i 's/net.ipv4.ip_forward=*/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
 
 iptables -t nat -A POSTROUTING -o $EXTERNAL -j MASQUERADE
 iptables -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
