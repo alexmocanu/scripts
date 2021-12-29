@@ -25,8 +25,6 @@ echo '        address 10.0.0.1' >> /etc/network/interfaces
 echo '        netmask 255.255.255.0' >> /etc/network/interfaces
 echo '        broadcast 10.0.0.255' >> /etc/network/interfaces
 
-service networking restart
-
 ####### 2. Install and configure dnsmasq for dhcp and dns
 apt-get -y install dnsmasq
 cp /etc/dnsmasq.conf /etc/dnsmasq.conf.old
@@ -87,3 +85,6 @@ iptables -A FORWARD -i $INTERNAL -o $EXTERNAL -j ACCEPT
 ### 5 Save iptables
 iptables-save > /etc/iptables/rules.v4
 ip6tables-save > /etc/iptables/rules.v6
+
+### 6 Restart networking services
+service networking restart
