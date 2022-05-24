@@ -72,4 +72,11 @@ apk add $(apk search --quiet --exact gvfs* | grep -v -- '\-doc$' | grep -v '\-de
 apk add fuse udisks2 fuse-openrc ntfs-3g
 rc-update add fuse
 
+#bluetooth support - untested
+#apk add bluez bluez-alsa-openrc bluez-libs bluez-obexd bluez-openrc bluez-firmware bluez-btmon bluez-hid2hci bluez-btmgmt bluez-cups bluez-plugins bluez-meshctl bluez-alsa
+#apk add blueman
+#rc-update add bluetooth
+#rc-update bluetooth start
+
+
 echo "REBOOT THE MACHINE!"
