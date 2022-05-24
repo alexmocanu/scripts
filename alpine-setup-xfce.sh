@@ -39,6 +39,7 @@ rc-service udev start
  
 #install Network Manager
 apk add networkmanager networkmanager-openrc network-manager-applet wpa_supplicant
+apk add $(apk search --quiet --exact networkmanager* | grep -v -- '\-doc$' | grep -v '\-dev')
 adduser $USERNAME dialout
 adduser $USERNAME plugdev
 rc-update add networkmanager
@@ -66,5 +67,9 @@ amixer -c 0 set 'PCM' playback 0% mute
 amixer -c 0 set 'PCM' playback 100% unmute
 alsactl store
 
+#additional stuff for thunar: gvfs plugins, fuse, ntfs, etc.
+apk add $(apk search --quiet --exact gvfs* | grep -v -- '\-doc$' | grep -v '\-dev')
+apk add fuse udisks2 fuse-openrc ntfs-3g
+rc-update add fuse
 
 echo "REBOOT THE MACHINE!"
