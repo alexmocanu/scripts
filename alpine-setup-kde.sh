@@ -1,78 +1,87 @@
-#replace these with yours
+# replace these with your desired credentials
 USERNAME=alex
 PASSWORD=pass
- 
+
+# update packages
 apk update && apk upgrade 
- 
-#install xorg and drivers
-setup-xorg-base $(apk search --quiet --exact xf86-video* | grep -v -- '\-doc$')
- 
-#install KDE desktop
-apk add desktop-file-utils dbus sddm udev sudo
-apk add $(apk search plasma -q | grep -v '\-dev' | grep -v '\-lang' | grep -v '\-doc')
-apk add konsole dolphin dolphin-plugins okular kwrite ark kwalletmanager
-apk add kde-applications-base kde-applications-admin kde-applications-network kde-applications-utils kde-applications-accessibility kde-applications-graphics
-apk add kde-applications-base kde-applications-admin kde-applications-accessibility kde-applications-graphics kde-applications-utils kde-applications-network kde-applications-multimedia
-#apk add kde-applications-pim kde-applications-webdev kde-applications-games
 
+# Create user account as admin (Add to wheel group and set up doas)
+setup-user -a $USERNAME
 
-#configure some services to start at boot
-rc-update add sddm
-rc-update add dbus
-rc-update add udev
- 
-#create the restricted user
-adduser $USERNAME -D && echo $USERNAME:$PASSWORD | chpasswd
-adduser $USERNAME audio
-adduser $USERNAME video
-adduser $USERNAME dialout
- 
-#optionally add sudo support to this user
-echo "$USERNAME ALL=(ALL:ALL) ALL" >> /etc/sudoers
- 
-#install X11 addons for D-BUS then start the service
-apk add dbus-x11
-rc-service dbus start
- 
-#install additional TTF fonts. ttf-opensans and ttf-google-opensans will try to overwrite eachother, not a big deal but you might want to choose between one of them. 
-apk add $(apk search -q ttf- | grep -v '\-doc')
- 
-#start some services
-rc-service udev start
-#rc-service sddm start
- 
-#install Network Manager
-apk add networkmanager networkmanager-openrc network-manager-applet wpa_supplicant
-adduser $USERNAME dialout
-adduser $USERNAME plugdev
+# Set user password
+echo $USERNAME:$PASSWORD | chpasswd
+
+# Enable sudo support:
+# Add sudo package, Enable sudo for members of wheel and sudo groups
+apk add sudo
+echo '%wheel ALL=(ALL:ALL) ALL' >> /etc/sudoers.d/wheel
+echo '%sudo ALL=(ALL:ALL) ALL' >> /etc/sudoers.d/sudo
+
+# Install plasma desktop, dolphin file manager and it's plugins
+setup-desktop plasma
+apk add dolphin dolphin-plugins
+
+# Setup some groups needed by our new user account
+adduser $USERNAME audio # access to audio devices (the soundcard or a microphone).
+adduser $USERNAME video # access to video devices (webcams for example)
+adduser $USERNAME netdev # manage network interfaces through the network manager and wicd.
+
+# Install networkmanager and wpa_supplicant
+apk add networkmanager networkmanager-openrc networkmanager-tui networkmanager-qt networkmanager-wifi wpa_supplicant
 rc-update add networkmanager
 rc-update add wpa_supplicant default
- 
+
+# Setup some more groups 
+adduser $USERNAME dialout # ... 
+adduser $USERNAME plugdev # allow mount removable devices
+
+# Reset the networks configuration file leaving only the loopback interface. Network manager won't touch any interface configured here and they will appear as unmanaged.
 truncate -s0 /etc/network/interfaces
 echo 'auto lo' >> /etc/network/interfaces
 echo 'iface lo inet loopback' >> /etc/network/interfaces
 
-# - wpa supplicant conflicts with NM so we clear this file
+# Truncate the wpa supplicant configuration for the same reason. NM uses wpa_supplicant but any interface in this conf. file will be ignored 
 truncate -s0 /etc/wpa_supplicant/wpa_supplicant.conf
 
-# - uncomment these lines if you want to stop randomizing your wifi MAC.
-#echo '[device]' >> /etc/NetworkManager/NetworkManager.conf
-#echo 'wifi.scan-rand-mac-address=no' >> /etc/NetworkManager/NetworkManager.conf
+# Install Samba and add kde support for file sharing (allow sharing directories without messing around with the smb.conf file)
+apk add samba kdenetwork-filesharing
+rc-update add samba
 
- 
-#install and configure sound
-apk add alsa-utils alsa-utils-doc alsa-lib alsaconf
-adduser root audio
-rc-service alsa start
-rc-update add alsa
-amixer -c 0 set 'Master' playback 0% mute
-amixer -c 0 set 'Master' playback 100% unmute
-amixer -c 0 set 'PCM' playback 0% mute
-amixer -c 0 set 'PCM' playback 100% unmute
-alsactl store
- 
-apk add pulseaudio pulseaudio-alsa alsa-plugins-pulse
-chmod +x /etc/init.d/pulseaudio
-rc-update add pulseaudio
- 
-echo "REBOOT THE MACHINE!"
+# Configure Samba to accept user shares (allow sharing directories without messing around with the smb.conf file)
+
+export USERSHARES_DIR="/var/lib/samba/usershares"
+export USERSHARES_GROUP="sambashare"
+mkdir -p ${USERSHARES_DIR}
+groupadd ${USERSHARES_GROUP}
+chown root:${USERSHARES_GROUP} ${USERSHARES_DIR}
+chmod 01770 ${USERSHARES_DIR}
+
+# Backup the old smb.conf file
+mv /etc/samba/smb.conf /etc/samba/smb.conf_old
+cp basic_samba_config.conf /etc/samba/smb.conf
+
+# Add our user acount to the sambashare group - enables samba user shares
+usermod -a -G ${USERSHARES_GROUP} ${USERNAME}
+
+# Creates a Samba user and sets it's password. We use the same username and password as our regular user for convenience.
+# Please note that Samba users and passwords are not synced with the system. Changing the samba password is done separately with the smbpasswd command
+(echo "$PASSWORD"; echo "$PASSWORD") | smbpasswd -s -a "$USERNAME"
+
+# Install the cups server for printing support and enable thge cups service
+apk add cups cups-libs cups-client cups-filters
+# apk add cups-pdf hplip # The cups-pdf and hplip packages are available only in the testing repository. You might have to enable it or set it up with the @testing tag and install these packages as explained here: https://wiki.alpinelinux.org/wiki/Repositories
+rc-update add cupsd boot
+
+#fix error: Failed to group devices: 'The name org.fedoraproject.Config.Printing was not provided by any .service files' when trying to add a new printer from KDE
+apk add system-config-printer 
+
+#Set up groups membership to enable printing
+adduser root lp
+adduser root lpadmin
+adduser $USERNAME lp
+adduser $USERNAME lpadmin
+
+#Install some additional components required for KDE's system information pages
+apk add util-linux-misc #lscpu
+apk add aha fwupd #firmware details
+apk add pciutils #lspci
