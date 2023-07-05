@@ -29,8 +29,8 @@ setup-xorg-base $(apk search --quiet --exact xf86-video* | grep -v -- '\-doc$')
 #install MATE desktop metapackage
 apk add mate-desktop-environment
 
-#Install additional dependencies: gtk engines, lightdm login manager, hicolor icon theme, dbus bindings or x11
-apk add gtk-engines gtk-murrine-engine lightdm lightdm-gtk-greeter hicolor-icon-theme apk dbus-x11
+#Install additional dependencies: gtk engines, lightdm login manager, hicolor icon theme, dbus bindings for x11
+apk add gtk-engines gtk-murrine-engine lightdm lightdm-gtk-greeter hicolor-icon-theme dbus-x11
 
 # Setup some groups needed by our new user account
 adduser $USERNAME audio # access to audio devices (the soundcard or a microphone).
@@ -38,7 +38,7 @@ adduser $USERNAME video # access to video devices (webcams for example)
 adduser $USERNAME netdev # manage network interfaces through the network manager and wicd.
 
 # Setup some services to start at boot
-rc-update add sddm
+rc-update add lightdm
 rc-update add dbus
 rc-update add udev
 
@@ -60,7 +60,8 @@ echo 'iface lo inet loopback' >> /etc/network/interfaces
 truncate -s0 /etc/wpa_supplicant/wpa_supplicant.conf
 
 # Install Samba 
-apk add samba rc-update add samba
+apk add samba 
+rc-update add samba
 
 export USERSHARES_DIR="/var/lib/samba/usershares"
 export USERSHARES_GROUP="sambashare"
