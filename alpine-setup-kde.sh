@@ -85,3 +85,11 @@ adduser $USERNAME lpadmin
 apk add util-linux-misc #lscpu
 apk add aha fwupd #firmware details
 apk add pciutils #lspci
+
+#clinfo is available only in the testing repository.
+#apk add clinfo@testing // opencl details
+apk add mesa-utils //opengl details
+apk add vulkan-tools //vulkan details
+apk add wayland-utils //wayland info
+xdpyinfo //xorg details
+
