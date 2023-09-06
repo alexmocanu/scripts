@@ -91,5 +91,5 @@ apk add pciutils #lspci
 apk add mesa-utils # opengl details
 apk add vulkan-tools # vulkan details
 apk add wayland-utils # wayland info
-xdpyinfo # xorg details
+apk add xdpyinfo # xorg details
 
