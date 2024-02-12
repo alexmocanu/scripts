@@ -27,7 +27,7 @@ adduser $USERNAME video # access to video devices (webcams for example)
 adduser $USERNAME netdev # manage network interfaces through the network manager and wicd.
 
 # Install networkmanager and wpa_supplicant
-apk add networkmanager networkmanager-openrc networkmanager-tui networkmanager-qt networkmanager-wifi wpa_supplicant
+apk add networkmanager networkmanager-openrc networkmanager-tui networkmanager-qt5 networkmanager-wifi wpa_supplicant
 rc-update add networkmanager
 rc-update add wpa_supplicant default
 
