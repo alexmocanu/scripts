@@ -81,6 +81,11 @@ adduser root lpadmin
 adduser $USERNAME lp
 adduser $USERNAME lpadmin
 
+#Set up flatpak and flathub
+apk add flatpak
+apk add discover-backend-flatpak
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
 #Install some additional components required for KDE's system information pages
 apk add util-linux-misc #lscpu
 apk add aha fwupd #firmware details
